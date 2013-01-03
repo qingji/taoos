@@ -1,29 +1,43 @@
+TOOL_PATH = tool/
+SRC_PATH = src/
+OUT_PATH = out/
+BIN_PATH = bin/
+
+MAKE 	 = $(TOOL_PATH)make.exe -r
+NASK     = $(TOOL_PATH)nask.exe
+EDIMG    = $(TOOL_PATH)edimg.exe
+IMGTOL   = $(TOOL_PATH)imgtol.com
+COPY     = copy
+DEL      = del
+
 default :
-	tool\make.exe -r img
+	$(MAKE) -r img
 	
-ipl.bin : src\ipl.nas Makefile
-	tool\nask.exe src\ipl.nas out\ipl.bin out\ipl.lst
+ipl.bin : src\ipl.nas Makefile clean
+	$(NASK) src\ipl.nas out\ipl.bin out\ipl.lst
 	
 taoos.img : ipl.bin Makefile
-	tool\edimg.exe imgin:tool\fdimg0at.tek \
-		wbinimg src:out\ipl.bin len:512 from:0 to:0  imgout:bin\taoos.img
+	$(EDIMG) imgin:$(TOOL_PATH)fdimg0at.tek \
+		wbinimg src:$(OUT_PATH)ipl.bin len:512 from:0 to:0  imgout:$(BIN_PATH)taoos.img
 		
 
 asm :
-	tool\make.exe -r ipl.bin
+	$(MAKE) ipl.bin
 
 img : 
-	tool\make.exe -r taoos.img
+	$(MAKE) taoos.img
 	
-run :
-	tool\make.exe img
-	copy bin\taoos.img tool\qemu\fdimage0.bin
-	tool\make.exe -C tool\qemu
+run : taoos.img 
+	$(MAKE) img
+	$(COPY) bin\taoos.img bin\fdimage0.bin
+	$(MAKE) -C $(TOOL_PATH)qemu
 	
 install :
-	tool\make.exe img
-	tool\imgtol.com w a: bin\taoos.img
+	$(MAKE) img
+	$(IMGTOL) w a: $(BIN_PATH)taoos.img
 	
 clean :
-	-del out\*
-	-del bin\*
+	-$(DEL) out\ipl.bin
+	-$(DEL) out\ipl.lst
+	
+	-$(DEL) bin\taoos.img
