@@ -29,7 +29,7 @@ img :
 	
 run : taoos.img 
 	$(MAKE) img
-	$(COPY) bin\taoos.img bin\fdimage0.bin
+	$(COPY) bin\taoos.img tool\qemu\fdimage0.bin
 	$(MAKE) -C $(TOOL_PATH)qemu
 	
 install :

@@ -1,5 +1,6 @@
 ﻿;TAOOS-IPL
 ;TAB=4
+CYLS	EQU	10 ;10个柱面
 
 	ORG		0x7c00		;指明程序的装载地址
 
@@ -76,6 +77,15 @@ read_next:
 	ADD		CL,1	;往后推一个扇区.
 	CMP		CL,18	;是否到18扇区?
 	JBE		read_loop ; if CL<= 18 跳转至readloop. (JBE: jump if below or equal, 小于等于就跳转)
+	; 如果扇区大于18,就继续读下一个柱面
+	MOV		CL,1
+	ADD		DH,1	;切换到反面磁头
+	CMP		DH,2
+	JB	read_loop ;
+	MOV		DH,0	;切换到正面磁头
+	ADD		DL,1	;切换到下一个扇区
+	CMP		CH,CYLS ;是否到CYLS扇区?
+	JB		read_loop
 	
 fin:
 	HLT		
