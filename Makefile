@@ -15,14 +15,15 @@ default :
 	
 ipl.bin : src\ipl.nas Makefile clean
 	$(NASK) src\ipl.nas out\ipl.bin out\ipl.lst
-	
-taoos.img : ipl.bin Makefile
-	$(EDIMG) imgin:$(TOOL_PATH)fdimg0at.tek \
-		wbinimg src:$(OUT_PATH)ipl.bin len:512 from:0 to:0  imgout:$(BIN_PATH)taoos.img
-		
 
-asm :
-	$(MAKE) ipl.bin
+taoos.sys : src\taoos.nas Makefile
+	$(NASK) src\taoos.nas out\taoos.sys  out\taoos.lst
+	
+taoos.img : ipl.bin taoos.sys Makefile
+	$(EDIMG) imgin:$(TOOL_PATH)fdimg0at.tek \
+		wbinimg src:$(OUT_PATH)ipl.bin len:512 from:0 to:0  \
+		copy from:out/taoos.sys to:@: \
+		imgout:$(BIN_PATH)taoos.img
 
 img : 
 	$(MAKE) taoos.img
