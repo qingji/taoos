@@ -86,11 +86,11 @@ read_next:
 	ADD		CH,1	;切换到下一个扇区
 	CMP		CH,CYLS	;是否到CYLS扇区?
 	JB		read_loop		;CH < CYLS
-	
-fin:
-	HLT		
-	JMP		fin
 
+; 数据已经加载完,跳转至taoos.sys
+	MOV		[0x0ff0], CH
+	JMP		0xc200
+	
 disk_read_error:
 	MOV		SI,error_msg	
 	
@@ -104,7 +104,9 @@ putloop:
 	INT		0x10			; 调用显卡BIOS
 	JMP		putloop
 
-
+fin:
+	HLT		
+	JMP		fin
 
 	
 error_msg:
