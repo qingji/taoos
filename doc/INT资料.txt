@@ -1,4 +1,7 @@
 ﻿INT API
 
-INT 0x13
+磁盘 INT 0x13 
 	http://en.wikipedia.org/wiki/INT_13H
+	
+显卡 INT 0x10
+	http://en.wikipedia.org/wiki/INT_10H
