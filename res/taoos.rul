@@ -3,8 +3,8 @@ format:
 	data(align:4, logic:stack_end, file:code_end);
 
 file:
-	./harilibc.lib;
-	./golibc.lib;
+	res/harilibc.lib;
+	res/golibc.lib;
 
 label:
 	_HariStartup;
