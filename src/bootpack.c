@@ -5,11 +5,12 @@ void HariMain(void)
 {
 
 	int i;
+	char *p = (char *)0xa0000;
 	
-	for(i = 0x000a0000; i <= 0x000affff; i++)
+	for(i = 0; i <= 0x000affff; i++)
 	{
 		//ŽÊ“ü“žVRAM
-		write_mem8(i, i & 0x0f); 
+		*(p + i) = i & 0x0f;
 	}
 	
 	for(;;)
