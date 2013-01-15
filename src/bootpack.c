@@ -10,7 +10,7 @@ void HariMain(void)
 	for(i = 0; i <= 0x000affff; i++)
 	{
 		//ŽÊ“ü“žVRAM
-		*(p + i) = i & 0x0f;
+		p[i] = i & 0x0f;
 	}
 	
 	for(;;)
