@@ -6,12 +6,12 @@ DSKCAC	EQU		0x00100000		; ディスクキャッシュの場所
 DSKCAC0	EQU		0x00008000		; ディスクキャッシュの場所（リアルモード）
 
 ;有关BIOS_INFO
-CYLS	EQU		0x00f0		; 设定启动区
-LEDS	EQU		0x00f1
-VMODE	EQU		0x00f2		; 关于颜色数目的信息,颜色的位数
-SCRANX	EQU		0x00f4		; 分辨率的X(screen x)
-SCRANY	EQU		0x00f6		; 分辨率的Y(screen y)
-VRAM	EQU		0x00f8		; 图像缓冲区的开始地址
+CYLS	EQU		0x0ff0		; 设定启动区
+LEDS	EQU		0x0ff1
+VMODE	EQU		0x0ff2		; 关于颜色数目的信息,颜色的位数
+SCRANX	EQU		0x0ff4		; 分辨率的X(screen x)
+SCRANY	EQU		0x0ff6		; 分辨率的Y(screen y)
+VRAM	EQU		0x0ff8		; 图像缓冲区的开始地址
 
 
 		ORG		0xc200		; 
