@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void io_hlt(void);
 void io_cli(void);
 void io_out8(int port, int data);
@@ -41,6 +43,7 @@ struct BOOTINFO {
 void HariMain(void)
 {
 	struct BOOTINFO *binfo = (struct BOOTINFO *) 0x0ff0;
+	char s[40];
 	
 	init_palette();
 	
@@ -48,6 +51,9 @@ void HariMain(void)
 	putfonts8_asc(binfo->vram, binfo->scrnx,  8,  8, COL8_FFFFFF, "ABC 123");
 	putfonts8_asc(binfo->vram, binfo->scrnx, 32, 32, COL8_000000, "Tao OS.");
 	putfonts8_asc(binfo->vram, binfo->scrnx, 30, 30, COL8_FFFFFF, "Tao OS.");
+	
+	sprintf(s, "scrnx = %d", binfo->scrnx);
+	putfonts8_asc(binfo->vram, binfo->scrnx, 16, 64, COL8_FFFFFF, s);
 	
 	for(;;)
 	{
@@ -58,22 +64,22 @@ void HariMain(void)
 void init_palette(void)
 {
 	static unsigned char table_rgb[16 * 3] = {
-		0x00, 0x00, 0x00,	/*  0:üK */
-		0xff, 0x00, 0x00,	/*  1:—º? */
-		0x00, 0xff, 0x00,	/*  2:—º? */
-		0xff, 0xff, 0x00,	/*  3:—º‰© */
-		0x00, 0x00, 0xff,	/*  4:—º? */
-		0xff, 0x00, 0xff,	/*  5:—º‡ */
-		0x00, 0xff, 0xff,	/*  6:ó—ºF */
-		0xff, 0xff, 0xff,	/*  7:”’ */
-		0xc6, 0xc6, 0xc6,	/*  8:—ºŠD */
-		0x84, 0x00, 0x00,	/*  9:ˆÃ? */
-		0x00, 0x84, 0x00,	/* 10:ˆÃ? */
-		0x84, 0x84, 0x00,	/* 11:ˆÃ‰© */
-		0x00, 0x00, 0x84,	/* 12:ˆÃÂ */
-		0x84, 0x00, 0x84,	/* 13:ˆÃ‡ */
-		0x00, 0x84, 0x84,	/* 14:óˆÃ? */
-		0x84, 0x84, 0x84	/* 15:ˆÃŠD */
+		0x00, 0x00, 0x00,	/*  0:é»‘ */
+		0xff, 0x00, 0x00,	/*  1:äº®çº¢ */
+		0x00, 0xff, 0x00,	/*  2:äº®ç»¿ */
+		0xff, 0xff, 0x00,	/*  3:äº®é»„ */
+		0x00, 0x00, 0xff,	/*  4:äº®è“ */
+		0xff, 0x00, 0xff,	/*  5:äº®ç´« */
+		0x00, 0xff, 0xff,	/*  6:æµ…äº®è‰² */
+		0xff, 0xff, 0xff,	/*  7:ç™½ */
+		0xc6, 0xc6, 0xc6,	/*  8:äº®ç° */
+		0x84, 0x00, 0x00,	/*  9:æš—çº¢ */
+		0x00, 0x84, 0x00,	/* 10:æš—ç‡ */
+		0x84, 0x84, 0x00,	/* 11:æš—é»„ */
+		0x00, 0x00, 0x84,	/* 12:æš—é’ */
+		0x84, 0x00, 0x84,	/* 13:æš—ç´« */
+		0x00, 0x84, 0x84,	/* 14:æµ…æš—è“ */
+		0x84, 0x84, 0x84	/* 15:æš—ç° */
 	};
 	
 	set_palette(0, 15, table_rgb);
@@ -84,17 +90,17 @@ void init_palette(void)
 void set_palette(int start, int end, unsigned char *rgb)
 {
 	int i, eflags;
-	eflags = io_load_eflags(); // ?? ’†’f?‰Â?u “I?
-	io_cli(); // «IF(’†’f?u)?’u?0, ‹Ö~’†’f.
+	eflags = io_load_eflags(); // åŠ è½½IF(ç»ˆç«¯æ ‡å¿—)
+	io_cli(); // IFç½®ä¸º0
 	io_out8(0x03c8, start);
 	for(i = start; i <= end; i++)
 	{
 		io_out8(0x03c9, rgb[0] / 4);
 		io_out8(0x03c9, rgb[1] / 4);
 		io_out8(0x03c9, rgb[2] / 4);
-		rgb += 3; //‘O?3˜¢ˆÊ’u
+		rgb += 3; 
 	}
-	io_store_eflags(eflags); //‰ø? ’†’f?‰Â?u
+	io_store_eflags(eflags); //æ¢å¤
 	return;
 }
 
@@ -138,7 +144,7 @@ void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
 	for (i = 0; i < 16; i++) {
 		p = vram + (y + i) * xsize + x;
 		d = font[i];
-		if ((d & 0x80) != 0) { p[0] = c; } //10000000 & ?
+		if ((d & 0x80) != 0) { p[0] = c; } 
 		if ((d & 0x40) != 0) { p[1] = c; }
 		if ((d & 0x20) != 0) { p[2] = c; }
 		if ((d & 0x10) != 0) { p[3] = c; }
