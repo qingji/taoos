@@ -9,6 +9,8 @@ NASK     = $(TOOL_PATH)nask.exe
 CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
 GAS2NASK = $(TOOLPATH)gas2nask.exe -a
 OBJ2BIM  = $(TOOLPATH)obj2bim.exe
+MAKEFONT = $(TOOLPATH)makefont.exe
+BIN2OBJ  = $(TOOLPATH)bin2obj.exe
 BIM2HRB  = $(TOOLPATH)bim2hrb.exe
 RULEFILE = res/taoos.rul
 EDIMG    = $(TOOL_PATH)edimg.exe
@@ -43,10 +45,16 @@ bootpack.obj : bootpack.nas Makefile
 	
 naskfunc.obj : src\naskfunc.nas Makefile
 	$(NASK) src\naskfunc.nas out\naskfunc.obj out\naskfunc.lst
+
+hankaku.bin : res\hankaku.txt Makefile
+	$(MAKEFONT) res\hankaku.txt out\hankaku.bin
 	
-bootpack.bim : bootpack.obj naskfunc.obj Makefile
+hankaku.obj : hankaku.bin Makefile
+	$(BIN2OBJ) out\hankaku.bin out\hankaku.obj _hankaku
+	
+bootpack.bim : bootpack.obj naskfunc.obj hankaku.obj Makefile
 	$(OBJ2BIM) @$(RULEFILE) out:out\bootpack.bim stack:3136k map:out\bootpack.map \
-		out\bootpack.obj out\naskfunc.obj
+		out\bootpack.obj out\naskfunc.obj out\hankaku.obj
 # 3MB+64K=3136KB		
 
 bootpack.hrb : bootpack.bim Makefile
