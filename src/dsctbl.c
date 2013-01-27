@@ -1,62 +1,28 @@
-/*===============================================================
- *   struct定义
- *===============================================================
- */
- 
-/*
- * 存放GDT 8字节的内容 
- */
-struct SEGMENT_DESCRIPTOR{
-	short limit_low, base_low;
-	char base_mid, access_right;
-	char limit_high, base_high;
-};
+/* GDT和IDT相关 */
 
-/*
- * 存放IDT 8字节的内容 
- */
-struct GATE_DESCRIPTOR{
-	short offset_low, selector;
-	char dw_count,access_right;
-	short offset_high;
-};
-
-/*===============================================================
- * 方法引用
- *===============================================================
- */
-void init_gdtidt(void);
-void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar);
-void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
-void load_gdtr(int limit, int addr);
-void load_idtr(int limit, int addr);
-
-
-/*===============================================================
- * 方法定义
- *===============================================================
- */
+#include "bootpack.h"
  
 /*
  *  
  */ 
 void init_gdtidt(void)
 {
-	struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) 0x00270000;//使用0x00270000没有特殊意义, 仅仅是这块内存没人使用.
-	struct GATE_DESCRIPTOR *idt = (struct GATE_DESCRIPTOR *)0x0026f800;//同上
+	struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) ADR_GDT;
+	struct GATE_DESCRIPTOR *idt = (struct GATE_DESCRIPTOR *)ADR_IDT;
 	int i;
 	//init GDT
 	for(i = 0; i < 8192; i++) {
 		set_segmdesc(gdt + i, 0, 0, 0);
 	}
-	set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, 0x4092);//4GB
-	set_segmdesc(gdt + 1, 0x0007ffff, 0x00280000, 0x4092);//512KB
+	set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, AR_DATA32_RW);//4GB
+	set_segmdesc(gdt + 1, LIMIT_BOTPAK, ADR_BOTPAK, AR_CODE32_ER);//512KB
+	load_gdtr(LIMIT_GDT, ADR_GDT);
 	
 	//init IDT
 	for(i = 0; i < 256; i++){
 		set_gatedesc(idt + i, 0, 0, 0);
 	}
-	load_gdtr(0xffff, 0x00270000);
+	load_gdtr(LIMIT_IDT, ADR_IDT);
 	
 	return;
 }
