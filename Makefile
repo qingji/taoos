@@ -1,3 +1,6 @@
+OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj
+OUT_OBJS_BOOTPACK = out\bootpack.obj out\naskfunc.obj out\hankaku.obj out\graphic.obj out\dsctbl.obj
+
 TOOL_PATH = tool/
 SRC_PATH = src/
 OUT_PATH = out/
@@ -34,46 +37,18 @@ ipl10.bin : src\ipl10.nas Makefile
 asmhead.bin : src\asmhead.nas Makefile
 	$(NASK) src\asmhead.nas out\asmhead.bin out\asmhead.lst	
 	
-bootpack.gas : src\bootpack.c Makefile
-	$(CC1) -o out\bootpack.gas src\bootpack.c	
-
-bootpack.nas : bootpack.gas Makefile
-	$(GAS2NASK) out\bootpack.gas out\bootpack.nas
-	
-bootpack.obj : bootpack.nas Makefile
-	$(NASK) out\bootpack.nas out\bootpack.obj out\bootpack.lst
-	
-naskfunc.obj : src\naskfunc.nas Makefile
-	$(NASK) src\naskfunc.nas out\naskfunc.obj out\naskfunc.lst
-
 hankaku.bin : res\hankaku.txt Makefile
 	$(MAKEFONT) res\hankaku.txt out\hankaku.bin
 	
 hankaku.obj : hankaku.bin Makefile
 	$(BIN2OBJ) out\hankaku.bin out\hankaku.obj _hankaku
 
-graphic.gas : src\graphic.c Makefile
-	$(CC1) -o out\graphic.gas src\graphic.c	
-
-graphic.nas : graphic.gas Makefile
-	$(GAS2NASK) out\graphic.gas out\graphic.nas
+naskfunc.obj : src\naskfunc.nas Makefile
+	$(NASK) src\naskfunc.nas out\naskfunc.obj out\naskfunc.lst
 	
-graphic.obj : graphic.nas Makefile
-	$(NASK) out\graphic.nas out\graphic.obj out\graphic.lst
-
-dsctbl.gas : src\dsctbl.c Makefile
-	$(CC1) -o out\dsctbl.gas src\dsctbl.c	
-
-dsctbl.nas : dsctbl.gas Makefile
-	$(GAS2NASK) out\dsctbl.gas out\dsctbl.nas
-	
-dsctbl.obj : dsctbl.nas Makefile
-	$(NASK) out\dsctbl.nas out\dsctbl.obj out\dsctbl.lst
-	
-	
-bootpack.bim : bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj Makefile
+bootpack.bim : $(OBJS_BOOTPACK) Makefile
 	$(OBJ2BIM) @$(RULEFILE) out:out\bootpack.bim stack:3136k map:out\bootpack.map \
-		out\bootpack.obj out\naskfunc.obj out\hankaku.obj out\graphic.obj out\dsctbl.obj
+		$(OUT_OBJS_BOOTPACK)
 # 3MB+64K=3136KB		
 
 bootpack.hrb : bootpack.bim Makefile
@@ -89,6 +64,18 @@ taoos.img : ipl10.bin taoos.sys Makefile
 		copy from:out/taoos.sys to:@: \
 		imgout:$(BIN_PATH)taoos.img
 
+#====================================
+# πÊ‘Ú
+#====================================
+%.gas : src\%.c Makefile
+	$(CC1) -o out\$*.gas src\$*.c	
+
+%.nas : %.gas Makefile
+	$(GAS2NASK) out\$*.gas out\$*.nas
+
+%.obj : %.nas Makefile
+	$(NASK) out\$*.nas out\$*.obj out\$*.lst		
+		
 		
 #====================================
 #√¸¡Ó
@@ -111,7 +98,7 @@ clean :
 	-$(DEL) out\*.lst
 	-$(DEL) out\*.gas
 	-$(DEL) out\*.obj
-	-$(DEL) out\bootpack.nas
+	-$(DEL) out\*.nas
 	-$(DEL) out\bootpack.map
 	-$(DEL) out\bootpack.bim
 	-$(DEL) out\bootpack.hrb
