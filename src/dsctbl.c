@@ -14,23 +14,20 @@ void init_gdtidt(void)
 	for(i = 0; i < 8192; i++) {
 		set_segmdesc(gdt + i, 0, 0, 0);
 	}
-	set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, AR_DATA32_RW);//4GB
-	set_segmdesc(gdt + 1, LIMIT_BOTPAK, ADR_BOTPAK, AR_CODE32_ER);//512KB
-	load_gdtr(LIMIT_GDT, ADR_GDT);
+	set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, AR_DATA32_RW);//上限为4GB (0xffffffff)
+	set_segmdesc(gdt + 1, LIMIT_BOTPAK, ADR_BOTPAK, AR_CODE32_ER);//BOOTPACK的上限为512KB 
+	load_gdtr(LIMIT_GDT, ADR_GDT); //调用汇编函数, 给GDT赋值
 	
 	//init IDT
 	for(i = 0; i < 256; i++){
 		set_gatedesc(idt + i, 0, 0, 0);
 	}
-	load_gdtr(LIMIT_IDT, ADR_IDT);
+	load_gdtr(LIMIT_IDT, ADR_IDT);//调用汇编函数, 给LDT赋值
 	
 	return;
 }
 
 
-/*
- * 设置GDT
- */ 
 void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar)
 {
 	if(limit > 0xfffff){
@@ -47,9 +44,6 @@ void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, i
 	
 }
 
-/*
- * 
- */ 
 void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar)
 {
 	gd->offset_low = offset & 0xffff;
