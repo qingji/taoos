@@ -51,10 +51,29 @@ hankaku.bin : res\hankaku.txt Makefile
 	
 hankaku.obj : hankaku.bin Makefile
 	$(BIN2OBJ) out\hankaku.bin out\hankaku.obj _hankaku
+
+graphic.gas : src\graphic.c Makefile
+	$(CC1) -o out\graphic.gas src\graphic.c	
+
+graphic.nas : graphic.gas Makefile
+	$(GAS2NASK) out\graphic.gas out\graphic.nas
 	
-bootpack.bim : bootpack.obj naskfunc.obj hankaku.obj Makefile
+graphic.obj : graphic.nas Makefile
+	$(NASK) out\graphic.nas out\graphic.obj out\graphic.lst
+
+dsctbl.gas : src\dsctbl.c Makefile
+	$(CC1) -o out\dsctbl.gas src\dsctbl.c	
+
+dsctbl.nas : dsctbl.gas Makefile
+	$(GAS2NASK) out\dsctbl.gas out\dsctbl.nas
+	
+dsctbl.obj : dsctbl.nas Makefile
+	$(NASK) out\dsctbl.nas out\dsctbl.obj out\dsctbl.lst
+	
+	
+bootpack.bim : bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj Makefile
 	$(OBJ2BIM) @$(RULEFILE) out:out\bootpack.bim stack:3136k map:out\bootpack.map \
-		out\bootpack.obj out\naskfunc.obj out\hankaku.obj
+		out\bootpack.obj out\naskfunc.obj out\hankaku.obj out\graphic.obj out\dsctbl.obj
 # 3MB+64K=3136KB		
 
 bootpack.hrb : bootpack.bim Makefile

@@ -71,14 +71,14 @@ _io_out32:	; void io_out32(int port, int data);
 		RET		
 
 _io_load_eflags:	; int io_load_eflags(void);
-		PUSHFD		; PUSH EFLAGS 偲偄偆堄枴
+		PUSHFD		; PUSH EFLAGS 
 		POP		EAX
 		RET
 
 _io_store_eflags:	; void io_store_eflags(int eflags);
 		MOV		EAX,[ESP+4]
 		PUSH	EAX
-		POPFD		; POP EFLAGS 偲偄偆堄枴
+		POPFD		; POP EFLAGS 
 		RET		
 		
 _load_gdtr:		; void load_gdtr(int limit, int addr);
